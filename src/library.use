@@ -1,0 +1,204 @@
+model Library
+
+enum Eborrowed { borrowed, notBorrowed}
+enum Ereserved { reserved, notReserved}
+
+class Person
+	attributes
+		name:String
+		amountBorrowed:Integer
+		limit:Integer init = 6
+		fine:Integer init = 0
+
+	operations
+		borrow(c:Copy)
+		begin
+				c.borrow(self);
+		end
+
+		return(c:Copy)
+		begin
+			c.return(self)
+		end
+
+		viewBorrowed()
+		begin
+			for c in self.borrowed do
+				WriteLine(c.book.name);
+			end;
+		end
+
+		payFine(amount:Integer)
+
+		reserve(c:Copy)
+		begin
+			c.reserve(self)
+		end
+
+		removeReservation(c:Copy)
+		begin
+			c.removeReservation(self)
+		end
+end
+
+class Employee < Person
+	attributes
+		employeeID:Integer
+		role:String
+	operations
+		applyFine(p:Person, amount:Integer)
+		begin
+			p.fine := p.fine + amount
+		end
+end
+
+class Member < Person
+	attributes
+		memberID:Integer
+end
+
+class Copy
+	attributes
+		book:Book
+		borrowed: Eborrowed init = #notBorrowed
+		reserved: Ereserved init = #notReserved
+	operations
+		borrow(p:Person)
+		begin
+			for p1 in self.reservation do
+				if p = p1 then
+					self.reserved := #notReserved;
+					delete(self,p) from hasReserved;
+				end
+			end;
+
+			if self.reserved = #notReserved then
+				insert(p,self) into hasBorrowed;
+				self.borrowed := #borrowed;
+				self.book.borrow();
+				p.amountBorrowed := p.amountBorrowed+1;
+			end
+		end
+
+		return(p:Person)
+		begin
+				delete(p,self) from hasBorrowed;
+				self.borrowed := #notBorrowed;
+				self.book.return();
+				p.amountBorrowed := p.amountBorrowed - 1;
+		end
+
+		reserve(p:Person)
+		begin
+				self.reserved := #reserved;
+				insert(self,p) into hasReserved;
+				WriteLine('This copy has been reserved for you');
+		end
+
+		removeReservation(p:Person)
+		begin
+			if self.reserved = #notReserved then
+				WriteLine('This Copy does not have a reservation to remove');
+			else
+				self.reserved := #notReserved;
+				delete(self,p) from hasReserved;
+			end
+
+		end
+end
+
+class Book
+	attributes
+		name:String
+		amount : Integer init = 2
+		available : Integer init = 2
+
+	operations
+		createCopy()
+		begin
+			declare c : Copy;
+			for i in Sequence{1..self.amount} do
+				self.available := self.amount;
+				c := new Copy;
+				c.borrowed := #notBorrowed;
+				c.book := self;
+				c.reserved := #notReserved;
+				insert (self,c) into ofType;
+			end
+		end
+
+		borrow()
+		begin
+			self.available := self.available - 1;
+		end
+
+		return()
+		begin
+			self.available := self.available + 1;
+		end
+
+		statemachines
+			psm States
+			states
+					newTitle : initial
+					available 	[available > 0]
+					unavailable [available = 0]
+				transitions
+					newTitle ->  available  { create }
+					available -> unavailable { [available = 1] borrow() }
+					available -> available { [available > 1] borrow() }
+					available -> available { return() }
+					unavailable -> available { return() }
+		end
+end
+
+association ofType between
+	Book[1]
+	Copy[0..*] role type
+end
+
+association hasBorrowed between
+	Person[0..1] role borrower
+	Copy[0..*] role borrowed
+end
+
+association hasReserved between
+	Copy[0..1]
+	Person[0..*] role reservation
+end
+
+constraints
+
+context Person::borrow(c:Copy)
+	pre limit: self.amountBorrowed < self.limit
+	pre ex: self.borrowed->excludes(c)
+	pre same: self.borrowed.book->excludes(c.book)
+
+context Copy::borrow(p:Person)
+ 	pre notBorrowed: self.borrowed = #notBorrowed
+
+context Book::borrow()
+	post availCheck: self.available >= 0
+
+context Person::return(c:Copy)
+	pre inc: self.borrowed->includes(c)
+	post ex: self.borrowed->excludes(c)
+
+context Person::payFine(amount:Integer)
+	pre not0: self.fine > 0
+	post NotOverpaid: self.fine >= 0
+
+context Person::reserve(c:Copy)
+	pre ex: c.reservation->isEmpty()
+
+context Copy::reserve(p:Person)
+	pre notReserved: self.reserved = #notReserved
+	pre notBorrowed: self.borrowed = #notBorrowed
+
+context Person::removeReservation(c:Copy)
+	pre inc: c.reservation->includes(self)
+	post ex: c.reservation->isEmpty()
+
+context Employee::applyFine(p:Person, amount:Integer)
+	pre notOver: p.fine < 50
+	post notOver2: p.fine < 50

@@ -1,0 +1,7 @@
+context Person
+  inv AmountLessThanLimit:
+    self.amountBorrowed <= self.limit
+
+context Book
+  inv TotalHigherThanAvailable:
+    self.amount >= self.available

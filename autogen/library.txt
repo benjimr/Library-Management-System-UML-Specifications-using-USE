@@ -1,0 +1,237 @@
+Apr 25, 2017 11:33:17 AM java.util.prefs.WindowsPreferences <init>
+WARNING: Could not open/create prefs root node Software\JavaSoft\Prefs at root 0x80000002. Windows RegCreateKeyEx(...) returned error code 5.
+USE version 4.2.0, Copyright (C) 1999-2016 University of Bremen
+use> open library.use
+compiling specification...
+done
+Model Library (5 classes, 3 associations, 0 invariants, 14 operations, 17 pre-/postconditions, 1 state machine)
+use> open library.soil
+library.soil> !new Member('joe')
+library.soil> !joe.name := 'Joseph'
+library.soil> !joe.amountBorrowed := 0
+library.soil> !joe.limit := 6
+library.soil> !joe.memberID := 123456
+library.soil> !joe.fine := 0
+library.soil> 
+library.soil> !new Member('anne')
+library.soil> !anne.name := 'Anne'
+library.soil> !anne.amountBorrowed :=0
+library.soil> !anne.limit := 6
+library.soil> !anne.memberID := 654321
+library.soil> !anne.fine := 0
+library.soil> 
+library.soil> !new Employee('john')
+library.soil> !john.name := 'John'
+library.soil> !john.amountBorrowed := 0
+library.soil> !john.limit := 12
+library.soil> !john.employeeID := 098765
+library.soil> !john.role := 'Librarian'
+library.soil> !john.fine := 0
+library.soil> 
+library.soil> !new Book('HarryPotter')
+library.soil> !HarryPotter.name := 'Harry Potter'
+library.soil> !HarryPotter.amount := 2
+library.soil> !HarryPotter.createCopy()
+library.soil> 
+library.soil> !new Book('TheHungerGames')
+library.soil> !TheHungerGames.name := 'The Hunger Games'
+library.soil> !TheHungerGames.amount := 2
+library.soil> !TheHungerGames.createCopy()
+library.soil> 
+library.soil> !new Book('NineteenEightyFour')
+library.soil> !NineteenEightyFour.name := '1984'
+library.soil> !NineteenEightyFour.amount := 2
+library.soil> !NineteenEightyFour.createCopy()
+library.soil> 
+library.soil> !new Book('TheMartian')
+library.soil> !TheMartian.name := 'The Martian'
+library.soil> !TheMartian.amount := 2
+library.soil> !TheMartian.createCopy()
+library.soil> 
+library.soil> !new Book('LOTR')
+library.soil> !LOTR.name := 'Lord of The Rings'
+library.soil> !LOTR.amount := 2
+library.soil> !LOTR.createCopy()
+library.soil> 
+use> The command `gen load' is deprecated and will be removed in the next USE release. Please replace it with the command `constraints -load'.
+Added invariants:
+Person::AmountLessThanLimit
+Book::TotalHigherThanAvailable
+use> check -a
+checking structure...
+checked structure in 0ms.
+checking invariants...
+checking invariant (1) `Book::TotalHigherThanAvailable': OK.
+checking invariant (2) `Person::AmountLessThanLimit': OK.
+checked 2 invariants in 0.016s, 0 failures.
+use> !joe.borrow(Copy2)
+use> !joe.borrow(Copy3)
+use> !joe.borrow(Copy4)
+use> !joe.borrow(Copy5)
+use> !joe.borrow(Copy6)
+use> !joe.borrow(Copy7)
+use> !joe.borrow(Copy8)
+[Error] 1 precondition in operation call `Person::borrow(self:joe, c:Copy8)' does not hold:
+  limit: (self.amountBorrowed < self.limit)
+    self : Member = joe
+    self.amountBorrowed : Integer = 6
+    self : Member = joe
+    self.limit : Integer = 6
+    (self.amountBorrowed < self.limit) : Boolean = false
+
+  call stack at the time of evaluation:
+    1. Person::borrow(self:joe, c:Copy8) [caller: joe.borrow(Copy8)@<input>:1:0]
+
++------------------------------------------------------------------+
+| Evaluation is paused. You may inspect, but not modify the state. |
++------------------------------------------------------------------+
+
+Currently only commands starting with `?', `:', `help' or `info' are allowed.
+`c' continues the evaluation (i.e. unwinds the stack).
+
+> Error: precondition false in operation call `Person::borrow(self:joe, c:Copy8)'.
+use> !anne.borrow(Copy2)
+[Error] 1 precondition in operation call `Copy::borrow(self:Copy2, p:anne)' does not hold:
+  notBorrowed: (self.borrowed = Eborrowed::notBorrowed)
+    self : Copy = Copy2
+    self.borrowed : Eborrowed = Eborrowed::borrowed
+    Eborrowed::notBorrowed : Eborrowed = Eborrowed::notBorrowed
+    (self.borrowed = Eborrowed::notBorrowed) : Boolean = false
+
+  call stack at the time of evaluation:
+    2. Copy::borrow(self:Copy2, p:anne) [caller: c.borrow(self)@D:\benjm\Documents\College\Software Engineering 1+ 2\USE\AssignmentSem2\library.use:16:4]
+    1. Person::borrow(self:anne, c:Copy2) [caller: anne.borrow(Copy2)@<input>:1:0]
+
++------------------------------------------------------------------+
+| Evaluation is paused. You may inspect, but not modify the state. |
++------------------------------------------------------------------+
+
+Currently only commands starting with `?', `:', `help' or `info' are allowed.
+`c' continues the evaluation (i.e. unwinds the stack).
+
+> Error: precondition false in operation call `Copy::borrow(self:Copy2, p:anne)'.
+use> !joe.return(Copy7)
+use> !joe.return(Copy6)
+use> !joe.return(Copy5)
+use> !joe.return(Copy4)
+use> !joe.return(Copy3)
+use> !joe.return(Copy2)
+use> !joe.return(Copy1)
+[Error] 1 precondition in operation call `Person::return(self:joe, c:Copy1)' does not hold:
+  inc: self.borrowed->includes(c)
+    self : Member = joe
+    self.borrowed : Set(Copy) = Set{}
+    c : Copy = Copy1
+    self.borrowed->includes(c) : Boolean = false
+
+  call stack at the time of evaluation:
+    1. Person::return(self:joe, c:Copy1) [caller: joe.return(Copy1)@<input>:1:0]
+
++------------------------------------------------------------------+
+| Evaluation is paused. You may inspect, but not modify the state. |
++------------------------------------------------------------------+
+
+Currently only commands starting with `?', `:', `help' or `info' are allowed.
+`c' continues the evaluation (i.e. unwinds the stack).
+
+> Error: precondition false in operation call `Person::return(self:joe, c:Copy1)'.
+use> !joe.borrow(Copy1)
+use> !anne.return(Copy1)
+[Error] 1 precondition in operation call `Person::return(self:anne, c:Copy1)' does not hold:
+  inc: self.borrowed->includes(c)
+    self : Member = anne
+    self.borrowed : Set(Copy) = Set{}
+    c : Copy = Copy1
+    self.borrowed->includes(c) : Boolean = false
+
+  call stack at the time of evaluation:
+    1. Person::return(self:anne, c:Copy1) [caller: anne.return(Copy1)@<input>:1:0]
+
++------------------------------------------------------------------+
+| Evaluation is paused. You may inspect, but not modify the state. |
++------------------------------------------------------------------+
+
+Currently only commands starting with `?', `:', `help' or `info' are allowed.
+`c' continues the evaluation (i.e. unwinds the stack).
+
+> Error: precondition false in operation call `Person::return(self:anne, c:Copy1)'.
+use> !joe.return(Copy1)
+use> !joe.reserve(Copy1)
+This copy has been reserved for you
+use> !anne.reserve(Copy1)
+[Error] 1 precondition in operation call `Person::reserve(self:anne, c:Copy1)' does not hold:
+  ex: c.reservation->isEmpty
+    c : Copy = Copy1
+    c.reservation : Set(Person) = Set{joe}
+    c.reservation->isEmpty : Boolean = false
+
+  call stack at the time of evaluation:
+    1. Person::reserve(self:anne, c:Copy1) [caller: anne.reserve(Copy1)@<input>:1:0]
+
++------------------------------------------------------------------+
+| Evaluation is paused. You may inspect, but not modify the state. |
++------------------------------------------------------------------+
+
+Currently only commands starting with `?', `:', `help' or `info' are allowed.
+`c' continues the evaluation (i.e. unwinds the stack).
+
+> Error: precondition false in operation call `Person::reserve(self:anne, c:Copy1)'.
+use> !joe.borrow(Copy1)
+use> !anne.reserve(Copy2)
+This copy has been reserved for you
+use> !anne.removeReservation(Copy2)
+use> !anne.removeReservation(Copy2)
+[Error] 1 precondition in operation call `Person::removeReservation(self:anne, c:Copy2)' does not hold:
+  inc: c.reservation->includes(self)
+    c : Copy = Copy2
+    c.reservation : Set(Person) = Set{}
+    self : Member = anne
+    c.reservation->includes(self) : Boolean = false
+
+  call stack at the time of evaluation:
+    1. Person::removeReservation(self:anne, c:Copy2) [caller: anne.removeReservation(Copy2)@<input>:1:0]
+
++------------------------------------------------------------------+
+| Evaluation is paused. You may inspect, but not modify the state. |
++------------------------------------------------------------------+
+
+Currently only commands starting with `?', `:', `help' or `info' are allowed.
+`c' continues the evaluation (i.e. unwinds the stack).
+
+> Error: precondition false in operation call `Person::removeReservation(self:anne, c:Copy2)'.
+use> !john.applyFine(joe,100)
+[Error] 1 postcondition in operation call `Employee::applyFine(self:john, p:joe, amount:100)' does not hold:
+  notOver2: (p.fine < 50)
+    p : Member = joe
+    p.fine : Integer = 100
+    50 : Integer = 50
+    (p.fine < 50) : Boolean = false
+
+  call stack at the time of evaluation:
+    1. Employee::applyFine(self:john, p:joe, amount:100) [caller: john.applyFine(joe, 100)@<input>:1:0]
+
++------------------------------------------------------------------+
+| Evaluation is paused. You may inspect, but not modify the state. |
++------------------------------------------------------------------+
+
+Currently only commands starting with `?', `:', `help' or `info' are allowed.
+`c' continues the evaluation (i.e. unwinds the stack).
+
+> Error: postcondition false in operation call `Employee::applyFine(self:john, p:joe, amount:100)'.
+use> !john.applyFine(joe,20)
+use> !openter joe payFine(20)
+precondition `not0' is true
+use> !joe.fine := joe.fine - 20
+use> !opexit
+postcondition `NotOverpaid' is true
+use> manually changing value to cause invariant to fail
+Error: Unknown command `manually changing value to cause invariant to fail'. Try `help'.
+use> check -a
+checking structure...
+checked structure in 0ms.
+checking invariants...
+checking invariant (1) `Book::TotalHigherThanAvailable': OK.
+checking invariant (2) `Person::AmountLessThanLimit': FAILED.
+  -> false : Boolean
+checked 2 invariants in 0.000s, 1 failure.
+use> 

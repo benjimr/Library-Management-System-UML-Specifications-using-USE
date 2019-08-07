@@ -1,0 +1,46 @@
+!new Member('joe')
+!joe.name := 'Joseph'
+!joe.amountBorrowed := 0
+!joe.limit := 6
+!joe.memberID := 123456
+!joe.fine := 0
+
+!new Member('anne')
+!anne.name := 'Anne'
+!anne.amountBorrowed :=0
+!anne.limit := 6
+!anne.memberID := 654321
+!anne.fine := 0
+
+!new Employee('john')
+!john.name := 'John'
+!john.amountBorrowed := 0
+!john.limit := 12
+!john.employeeID := 098765
+!john.role := 'Librarian'
+!john.fine := 0
+
+!new Book('HarryPotter')
+!HarryPotter.name := 'Harry Potter'
+!HarryPotter.amount := 2
+!HarryPotter.createCopy()
+
+!new Book('TheHungerGames')
+!TheHungerGames.name := 'The Hunger Games'
+!TheHungerGames.amount := 2
+!TheHungerGames.createCopy()
+
+!new Book('NineteenEightyFour')
+!NineteenEightyFour.name := '1984'
+!NineteenEightyFour.amount := 2
+!NineteenEightyFour.createCopy()
+
+!new Book('TheMartian')
+!TheMartian.name := 'The Martian'
+!TheMartian.amount := 2
+!TheMartian.createCopy()
+
+!new Book('LOTR')
+!LOTR.name := 'Lord of The Rings'
+!LOTR.amount := 2
+!LOTR.createCopy()
