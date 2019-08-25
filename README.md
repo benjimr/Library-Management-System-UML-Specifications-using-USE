@@ -1,5 +1,3 @@
-# Library system UML Specifications using USE
-
 Defines classes, attributes, operations, statemachines, associations, invariants and constraints for a Library management system using USE specification.
 
 Model specifies different types of users (Members, Employees) and what each group can do, such as borrow, return or reserve books, as well as applying a fine to an account and paying a fine. Books and copies of books are also specified with controls ensuring no more than the avaialble amount of books are loaned, or loaned to a user who has already hit their limit.
